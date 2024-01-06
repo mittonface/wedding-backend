@@ -2,3 +2,7 @@
 
 # don't commit the binary
 wedding-backend
+
+# don't commit any terraform state
+.terraform/
+.terraform.lock.hcl
