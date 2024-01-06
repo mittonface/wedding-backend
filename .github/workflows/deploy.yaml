@@ -32,7 +32,7 @@ jobs:
           AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           TF_INPUT: 0
-          TF_VAR_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          TF_VAR_SUPABASE_SECRET: ${{ secrets.SUPABASE_SECRET }}
+          TF_VAR_supabase_url: ${{ secrets.SUPABASE_URL }}
+          TF_VAR_supabase_secret: ${{ secrets.SUPABASE_SECRET }}
         run: terraform plan -no-color
         continue-on-error: true
