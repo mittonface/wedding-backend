@@ -6,22 +6,17 @@ on:
       - main
 
 jobs:
- setup:
+ build:
    runs-on: ubuntu-latest
    steps:
      - name: Checkout
        uses: actions/checkout@v3
-     - name: Setup terraform
-       uses: hashicorp/setup-terraform@v2
+
      - name: Set up Go
        uses: actions/setup-go@v4
        with:
          go-version: ^1.21.4
 
- build:
-   needs: setup
-   runs-on: ubuntu-latest
-   steps:
      - name: Build the app 
        run: make build
 
@@ -29,6 +24,11 @@ jobs:
    needs: build
    runs-on: ubuntu-latest
    steps:
+     - name: Checkout
+       uses: actions/checkout@v3
+
+     - name: Setup terraform
+       uses: hashicorp/setup-terraform@v2
      - name: Terraform Init
        id: init
        working-directory: 'infrastructure'
