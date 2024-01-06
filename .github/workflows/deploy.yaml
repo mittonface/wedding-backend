@@ -25,6 +25,8 @@ jobs:
         run: make build
 
 
+      # TODO: Create the docker image and push to ECR. Tag with latest.
+      #       I think that will make the image deploy
       - name: Terraform Init
         id: init
         working-directory: 'infrastructure'
