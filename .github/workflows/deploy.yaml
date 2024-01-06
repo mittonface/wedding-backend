@@ -1,47 +1,41 @@
-name: Deploy Infrastructure
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
-  tf: 
-    name: Build and Deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+ setup:
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v3
+     - name: Setup terraform
+       uses: hashicorp/setup-terraform@v2
+     - name: Set up Go
+       uses: actions/setup-go@v4
+       with:
+         go-version: ^1.21.4
 
-      - name: Setup terraform
-        uses: hashicorp/setup-terraform@v2
+ build:
+   needs: setup
+   runs-on: ubuntu-latest
+   steps:
+     - name: Build the app 
+       run: make build
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: ^1.21.4
-
-      - name: Build the app 
-        run: make build
-
-
-      # TODO: Create the docker image and push to ECR. Tag with latest.
-      #       I think that will make the image deploy
-      - name: Terraform Init
-        id: init
-        working-directory: 'infrastructure'
-        env:
-          AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: terraform init
-
-      - name: Terraform Apply
-        id: apply
-        working-directory: 'infrastructure'
-        env:
-          AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          TF_INPUT: 0
-          TF_VAR_supabase_url: ${{ secrets.SUPABASE_URL }}
-          TF_VAR_supabase_secret: ${{ secrets.SUPABASE_SECRET }}
-        run: terraform apply -auto-approve
+ deploy:
+   needs: build
+   runs-on: ubuntu-latest
+   steps:
+     - name: Terraform Init
+       id: init
+       working-directory: 'infrastructure'
+       env:
+         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+       run: terraform init
+     - name: Terraform Apply
+       id: apply
+       working-directory: 'infrastructure'
+       env:
+         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         TF_INPUT: 0
+         TF_VAR_supabase_url: ${{ secrets.SUPABASE_URL }}
+         TF_VAR_supabase_secret: ${{ secrets.SUPABASE_SECRET }}
+       run: terraform apply -auto-approve
