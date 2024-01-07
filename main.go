@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/go-playground/validator"
@@ -10,19 +11,10 @@ import (
 	"github.com/mittonface/wedding-backend/database"
 	"github.com/mittonface/wedding-backend/rsvp"
 )
-func handleRsvp(w http.ResponseWriter, r *http.Request){
-	// init the database connection
-	db := &database.SupabaseDatabase{}
-	err := db.Initialize()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-
+func handleRsvp(db database.RsvpDB, w http.ResponseWriter, r *http.Request){
 	// decode the request body
 	var rsvp rsvp.RSVP
-	err = json.NewDecoder(r.Body).Decode(&rsvp)
+	err := json.NewDecoder(r.Body).Decode(&rsvp)
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
@@ -46,16 +38,9 @@ func handleRsvp(w http.ResponseWriter, r *http.Request){
 	
 }
 
-func getRsvp(w http.ResponseWriter, r *http.Request) {
+func getRsvp(db database.RsvpDB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	rsvpId := vars["rsvpId"]
-	// init the database connection
-	db := &database.SupabaseDatabase{}
-	err := db.Initialize()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 
 	rsvp, err := db.GetRSVP(rsvpId)
 	if err != nil {
@@ -78,15 +63,7 @@ func getRsvp(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-func health(w http.ResponseWriter, r *http.Request) {
-	// Initialize the database connection
-	db := &database.SupabaseDatabase{}
-	err := db.Initialize()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
+func health(db database.RsvpDB, w http.ResponseWriter, r *http.Request) {
 	// Create a dummy RSVP
 	dummyRsvp := rsvp.RSVP{
 		RsvpId: "dummy",
@@ -97,7 +74,7 @@ func health(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert the dummy RSVP into the database
-	err = db.InsertRSVP(&dummyRsvp)
+	err := db.InsertRSVP(&dummyRsvp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -120,9 +97,22 @@ func health(w http.ResponseWriter, r *http.Request) {
 
 
 func main() {
+
+	db := &database.SupabaseDatabase{}
+	err := db.Initialize()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	r := mux.NewRouter()
-	r.HandleFunc("/rsvp", handleRsvp).Methods("POST")
-	r.HandleFunc("/rsvp/{rsvpId}", getRsvp).Methods("GET")
-	r.HandleFunc("/health", health).Methods("GET")
+	r.HandleFunc("/rsvp", func(w http.ResponseWriter, r *http.Request) {
+		handleRsvp(db, w, r)
+	}).Methods("POST")
+	r.HandleFunc("/rsvp/{rsvpId}", func(w http.ResponseWriter, r *http.Request) {
+		getRsvp(db, w, r)
+	}).Methods("GET")
+	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		health(db, w, r)
+	}).Methods("GET")
 	http.ListenAndServe(":8080", r)
 }
