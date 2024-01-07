@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -23,9 +22,6 @@ type RsvpDB interface {
 
 func (db *SupabaseDatabase) Initialize() error {
 	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
 	SUPABASE_URL := os.Getenv("SUPABASE_URL")
 	SUPABASE_SECRET := os.Getenv("SUPABASE_SECRET")
 	client, err := supabase.NewClient(SUPABASE_URL, SUPABASE_SECRET, nil)
