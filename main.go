@@ -97,6 +97,7 @@ func health(db database.RsvpDB, w http.ResponseWriter, r *http.Request) {
 }
 
 
+
 func main() {
 
 	db := &database.SupabaseDatabase{}
@@ -108,6 +109,8 @@ func main() {
 	r := mux.NewRouter()
 
 	r.Use(middleware.LogMiddleware) 
+	r.Use(middleware.EnableCors) // Add this line
+
 
 	r.HandleFunc("/rsvp", func(w http.ResponseWriter, r *http.Request) {
 		handleRsvp(db, w, r)
