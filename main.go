@@ -9,6 +9,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
 	"github.com/mittonface/wedding-backend/database"
+	"github.com/mittonface/wedding-backend/middleware"
 	"github.com/mittonface/wedding-backend/rsvp"
 )
 func handleRsvp(db database.RsvpDB, w http.ResponseWriter, r *http.Request){
@@ -105,6 +106,9 @@ func main() {
 	}
 
 	r := mux.NewRouter()
+
+	r.Use(middleware.LogMiddleware) 
+
 	r.HandleFunc("/rsvp", func(w http.ResponseWriter, r *http.Request) {
 		handleRsvp(db, w, r)
 	}).Methods("POST")
@@ -114,5 +118,6 @@ func main() {
 	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		health(db, w, r)
 	}).Methods("GET")
+	log.Println("Running server on :8080")
 	http.ListenAndServe(":8080", r)
 }
