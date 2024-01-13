@@ -6,3 +6,5 @@ wedding-backend
 # don't commit any terraform state
 .terraform/
 .terraform.lock.hcl
+key.pem
+cert.pem
