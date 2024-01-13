@@ -119,5 +119,5 @@ func main() {
 		health(db, w, r)
 	}).Methods("GET")
 	log.Println("Running server on :8080")
-	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", nil))
+	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", r))
 }
