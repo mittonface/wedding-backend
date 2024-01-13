@@ -8,6 +8,11 @@ variable "app_environment" {
     description = "The environment"
 }
 
+variable "acm_cert_arn" {
+  type = string
+  default = "arn:aws:acm:us-east-1:009960124252:certificate/d4969b0d-2cc9-48c1-a996-51519eb9752f"
+}
+
 variable "aws_region" {
     type = string
     description = "Region to host the application in"

@@ -3,6 +3,10 @@ FROM golang:1.21
 # Set destination for COPY
 WORKDIR /app
 
+# Generate self-signed cert
+RUN openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/C=US/ST=Ottawa/L=Ottawa/O=Wedding backend/CN=*.brent.click"
+
+
 # Download Go modules
 COPY ./ ./
 RUN go mod download
