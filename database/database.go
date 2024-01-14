@@ -18,6 +18,8 @@ type RsvpDB interface {
 	Initialize() error
 	InsertRSVP(rsvp *rsvp.RSVP) error
 	GetRSVP(rsvpId string) (*rsvp.RSVP, error)
+	GetAllRSVPs() ([]rsvp.RSVP, error) // New method
+
 }
 
 func (db *SupabaseDatabase) Initialize() error {
@@ -51,4 +53,14 @@ func (db *SupabaseDatabase) GetRSVP(rsvpId string) (*rsvp.RSVP, error) {
 
 	return &rsvpResults[0], nil
  }
+
+ func (db *SupabaseDatabase) GetAllRSVPs() ([]rsvp.RSVP, error) {
+	var rsvpResults []rsvp.RSVP
+	_, err := db.Client.From("rsvps").Select("*", "exact", false).Neq("rsvpId", "dummy").
+	ExecuteTo(&rsvpResults)
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving all RSVPs: %w", err)
+	}
+	return rsvpResults, nil
+}
 

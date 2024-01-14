@@ -9,4 +9,5 @@ type RSVP struct {
 	MealSelection2 string `json:"mealSelection2"`
 	ExtraText string `json:"extraText"`
 	Attending bool `json:"attending" validate:"required"`
+	Added string `json:"added"`
 }

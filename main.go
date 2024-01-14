@@ -64,6 +64,28 @@ func getRsvp(db database.RsvpDB, w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
+func getAllRsvps(db database.RsvpDB, w http.ResponseWriter, r *http.Request) {
+
+	rsvps, err := db.GetAllRSVPs()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	// Marshal the rsvp object into JSON
+	jsonData, err := json.Marshal(rsvps)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set the Content-Type header to application/json
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write the JSON response to the response writer
+	w.Write(jsonData)
+}
+
 func health(db database.RsvpDB, w http.ResponseWriter, r *http.Request) {
 	// Create a dummy RSVP
 	dummyRsvp := rsvp.RSVP{
@@ -112,6 +134,9 @@ func main() {
 	r.Use(middleware.EnableCors) // Add this line
 
 
+	r.HandleFunc("/rsvps", func(w http.ResponseWriter, r *http.Request) {
+		getAllRsvps(db, w, r)
+	}).Methods("GET")
 	r.HandleFunc("/rsvp", func(w http.ResponseWriter, r *http.Request) {
 		handleRsvp(db, w, r)
 	}).Methods("POST")

@@ -25,3 +25,11 @@ func (db *MockSupabaseDatabase) GetRSVP(rsvpId string) (*rsvp.RSVP, error) {
 	}
 	return db.Rsvp, nil
 }
+
+
+func (db *MockSupabaseDatabase) GetAllRSVPs() ([]rsvp.RSVP, error) {
+	if db.Rsvp == nil {
+		return nil, errors.New("No RSVPs found")
+	}
+	return nil, nil
+}
