@@ -94,6 +94,7 @@ func health(db database.RsvpDB, w http.ResponseWriter, r *http.Request) {
 		NumGuests: 1,
 		MealSelection1: "dummy",
 		Attending: false,
+		Added: "2024-01-07 04:30:29.905495",
 	}
 
 	// Insert the dummy RSVP into the database
