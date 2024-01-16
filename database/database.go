@@ -19,6 +19,7 @@ type RsvpDB interface {
 	InsertRSVP(rsvp *rsvp.RSVP) error
 	GetRSVP(rsvpId string) (*rsvp.RSVP, error)
 	GetAllRSVPs() ([]rsvp.RSVP, error) // New method
+	DeleteRSVPs(rsvpId string) error
 
 }
 
@@ -64,3 +65,10 @@ func (db *SupabaseDatabase) GetRSVP(rsvpId string) (*rsvp.RSVP, error) {
 	return rsvpResults, nil
 }
 
+func (db *SupabaseDatabase) DeleteRSVPs(rsvpId string) error {
+	_, _, err := db.Client.From("rsvps").Delete("", "exact").Eq("rsvpId", rsvpId).Execute()
+	if err != nil {
+		return fmt.Errorf("error retrieving all RSVPs: %w", err)
+	}
+	return nil
+}

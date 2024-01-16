@@ -33,3 +33,10 @@ func (db *MockSupabaseDatabase) GetAllRSVPs() ([]rsvp.RSVP, error) {
 	}
 	return nil, nil
 }
+
+func (db *MockSupabaseDatabase) DeleteRSVPs() error {
+	if db.Rsvp == nil {
+		return errors.New("No RSVPs found")
+	}
+	return nil
+}

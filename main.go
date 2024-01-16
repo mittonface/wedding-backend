@@ -104,6 +104,12 @@ func health(db database.RsvpDB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = db.DeleteRSVPs(dummyRsvp.RsvpId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}	
+
 	// Return a simple JSON structure
 	response := map[string]string{"status": "OK"}
 	jsonResponse, err := json.Marshal(response)
@@ -111,6 +117,7 @@ func health(db database.RsvpDB, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 
 	// Set the Content-Type header to application/json
 	w.Header().Set("Content-Type", "application/json")
