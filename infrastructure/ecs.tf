@@ -80,9 +80,6 @@ resource "aws_ecs_service" "aws-ecs-service" {
   desired_count        = 1
   force_new_deployment = true
 
-  triggers = {
-    redeployment = timestamp()
-  }
 
   network_configuration {
     subnets          = aws_subnet.public.*.id
