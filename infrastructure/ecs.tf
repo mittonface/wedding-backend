@@ -19,7 +19,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
   [
     {
       "name": "${var.app_name}-${var.app_environment}-container",
-      "image": "${aws_ecr_repository.aws-ecr.repository_url}:latest",
+      "image": "${aws_ecr_repository.aws-ecr.repository_url}:${var.commit_sha}",
       "entryPoint": [],
       "environment": [
        {
@@ -59,6 +59,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
   cpu                      = "256"
   execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
   task_role_arn            = aws_iam_role.ecsTaskExecutionRole.arn
+  
 
   tags = {
     Name        = "${var.app_name}-ecs-td"

@@ -43,3 +43,7 @@ variable "supabase_secret" {
     description = "The api secret for our database"
 }
 
+variable "commit_sha" {
+ description = "Commit SHA from CI/CD pipeline"
+ type       = string
+}
