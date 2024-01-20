@@ -8,6 +8,6 @@ type RSVP struct {
 	MealSelection1 string `json:"mealSelection1" validate:"required"`
 	MealSelection2 string `json:"mealSelection2"`
 	ExtraText string `json:"extraText"`
-	Attending bool `json:"attending" validate:"required"`
-	Added string `json:"added"`
+	Attending bool `json:"attending"`
+	Added string `json:"added,omitempty"`
 }

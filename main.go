@@ -25,7 +25,7 @@ func handleRsvp(db database.RsvpDB, w http.ResponseWriter, r *http.Request){
 	validate := validator.New()
 	err = validate.Struct(rsvp)
 	if err != nil {
-		http.Error(w, "Invalid RSVP data", http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Invalid RSVP Data: %s", err), http.StatusBadRequest)
 		return
 	}
 
@@ -139,8 +139,9 @@ func main() {
 	r := mux.NewRouter()
 
 	r.Use(middleware.LogMiddleware) 
+	r.Use(middleware.EnableCors) 
 
-	r.HandleFunc("/*", func(w http.ResponseWriter, r *http.Request) {
+	r.PathPrefix("/").Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 
 		origin := r.Header.Get("Origin")
 		if origin == "http://localhost:3000" || origin == "https://jessandbrent.ca" {
@@ -150,8 +151,7 @@ func main() {
 		// Handle OPTIONS request here
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-	}).Methods("OPTIONS")
-
+	})
 	r.HandleFunc("/rsvps", func(w http.ResponseWriter, r *http.Request) {
 		getAllRsvps(db, w, r)
 	}).Methods("GET")
@@ -166,4 +166,5 @@ func main() {
 	}).Methods("GET")
 	log.Println("Running server on :8080")
 	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", r))
+	// log.Fatal(http.ListenAndServe(":8080", r))
 }
