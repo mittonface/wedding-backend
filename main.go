@@ -139,8 +139,18 @@ func main() {
 	r := mux.NewRouter()
 
 	r.Use(middleware.LogMiddleware) 
-	r.Use(middleware.EnableCors) // Add this line
 
+	r.HandleFunc("/*", func(w http.ResponseWriter, r *http.Request) {
+
+		origin := r.Header.Get("Origin")
+		if origin == "http://localhost:3000" || origin == "https://jessandbrent.ca" {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+		}
+
+		// Handle OPTIONS request here
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	}).Methods("OPTIONS")
 
 	r.HandleFunc("/rsvps", func(w http.ResponseWriter, r *http.Request) {
 		getAllRsvps(db, w, r)
