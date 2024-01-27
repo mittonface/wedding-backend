@@ -137,7 +137,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	USE_SSL := os.Getenv("SUPABASE_URL")
+	USE_SSL := os.Getenv("USE_SSL")
 
 	r := mux.NewRouter()
 
