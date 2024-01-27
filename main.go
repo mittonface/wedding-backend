@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
@@ -136,6 +137,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	USE_SSL := os.Getenv("SUPABASE_URL")
+
 	r := mux.NewRouter()
 
 	r.Use(middleware.LogMiddleware) 
@@ -165,6 +168,11 @@ func main() {
 		health(db, w, r)
 	}).Methods("GET")
 	log.Println("Running server on :8080")
-	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", r))
-	// log.Fatal(http.ListenAndServe(":8080", r))
+	
+	if USE_SSL == "true" {
+		log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", r))
+	} else {
+
+		log.Fatal(http.ListenAndServe(":8080", r))
+	}
 }

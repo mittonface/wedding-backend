@@ -29,6 +29,10 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
        {
          "name": "SUPABASE_URL",
          "value": "${local.SUPABASE_URL}"
+       },
+       {
+         "name": "USE_SSL",
+         "value": "true"
        }
      ],
       "essential": true,
