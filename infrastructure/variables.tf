@@ -41,6 +41,9 @@ variable "supabase_url" {
 
 variable "supabase_secret" {
     description = "The api secret for our database"
+variable "USE_SSL" {
+    description = "Use ssl?"
+    default = "true"
 }
 
 variable "commit_sha" {

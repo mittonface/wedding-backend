@@ -10,6 +10,7 @@ resource "aws_ecs_cluster" "aws-ecs-cluster" {
 locals {
     SUPABASE_SECRET = var.supabase_secret
     SUPABASE_URL = var.supabase_url
+    USE_SSL = var.use_ssl
 }
 
 resource "aws_ecs_task_definition" "aws-ecs-task" {
@@ -32,7 +33,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
        },
        {
          "name": "USE_SSL",
-         "value": "true"
+         "value": "${local.USE_SSL}"
        }
      ],
       "essential": true,
