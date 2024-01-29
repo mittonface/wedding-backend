@@ -43,7 +43,7 @@ variable "supabase_secret" {
     description = "The api secret for our database"
 }
 
-variable "USE_SSL" {
+variable "use_ssl" {
     description = "Use ssl?"
     default = "true"
 }
